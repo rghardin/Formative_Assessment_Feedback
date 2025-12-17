@@ -63,11 +63,11 @@ if st.button("Provide Feedback"):
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
         i=i+1
 
-outputdf = pd.DataFrame(idlist, columns=['ID','Lecture 5 (2494906)']) 
-st.dataframe(outputdf)
-outputdf.to_csv().encode("utf-8")
+    outputdf = pd.DataFrame(idlist, columns=['ID','Lecture 5 (2494906)']) 
+    st.dataframe(outputdf)
+    outputdf.to_csv().encode("utf-8")
 
-st.download_button(label="Download comment file", data=outputdf, filename="comments.csv",  mime="text/csv", icon=":material/download:" )
+    st.download_button(label="Download comment file", data=outputdf, filename="comments.csv",  mime="text/csv", icon=":material/download:" )
    
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
