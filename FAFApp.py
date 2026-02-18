@@ -6,7 +6,7 @@ Created on Tue Dec 16 14:35:13 2025
 
 Add following functionality:
 1. Folder and file selection for output file
-2. Entry of Assignment name and ID for output file
+2. Entry of Assignment name and ID for output file- added 02/18 RGH
 3. List and choose LLM
 4. Allow for cut and paste of question and answer text and editing
 5. Upload materials to use RAG with AI Chat
@@ -77,5 +77,6 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
