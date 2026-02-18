@@ -58,7 +58,7 @@ if studentresponses_file is not None:
     
 if st.button("Provide Feedback"):    
     for answer in answerlist:
-        prompt = "The following formative assessment question was given to students:\n" + question_string + "\nA thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" + answer + "\nPlease provide feedback to the student."
+        prompt = "The following formative assessment question was given to students:\n" + question_string + "\nA thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" + str(answer) + "\nPlease provide feedback to the student."
         result=interact_with_model("protected.gpt-5", prompt)
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
         i=i+1
@@ -75,3 +75,4 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
