@@ -34,13 +34,14 @@ def interact_with_model(chosen_model, my_query):
     return response.json() #Returns LLM response as a json object
 
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
+
 api_key = st.text_input("TAMU API Key", type="password")
 
-question_file = st.file_uploader("Choose the question file", type="txt")
-if question_file is not None:
-    question_IO = StringIO(question_file.getvalue().decode("utf-8"))
-    question_string = question_IO.read()
-    st.write(question_string) 
+#question_file = st.file_uploader("Choose the question file", type="txt")
+#if question_file is not None:
+    #question_IO = StringIO(question_file.getvalue().decode("utf-8"))
+    #question_string = question_IO.read()
+    #st.write(question_string) 
     
 solution_file = st.file_uploader("Choose the solution file", type="txt")
 if solution_file is not None:
@@ -53,18 +54,29 @@ if studentresponses_file is not None:
     df=pd.read_csv(studentresponses_file)
     st.dataframe(df)
     idlist = df.iloc[:,2].tolist()
-    answerlist = df.iloc[:,8].tolist()
-    i=0
-    
+    column_names = df.columns
+    number_questions = (length(column_names)-11)/2
+    questionlist = []
+    answerlist = []
+    for j in range(number_questions):
+        questionlist.append(column_names[8+j*2])
+        answerlist.append(df.iloc[:,8+j*2].tolist())
+       
 assignmentname = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")    
 
 if st.button("Provide Feedback"):    
-    for answer in answerlist:
-        prompt = "The following formative assessment question was given to students:\n" + question_string + "\nA thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" + str(answer) + "\nPlease provide feedback to the student."
+    for i in range(len(df)):
+        prompt = "The following formative assessment question was given to students:\n" 
+        for j in range(number_questions):
+            prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
+        prompt = prompt + "A thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" 
+        for j in range(number_questions):
+            prompt = prompt + str(j+1) + "." + answerlist[j][i] + "\n"
+        prompt = prompt + "Please provide feedback to the student."
+        
         result=interact_with_model("protected.gpt-5", prompt)
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
-        i=i+1
-
+        
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf)
     outputdf.to_csv().encode("utf-8")
@@ -77,6 +89,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
