@@ -61,7 +61,7 @@ if studentresponses_file is not None:
     for j in range(number_questions):
         questionlist.append(column_names[8+j*2])
         answerlist.append(df.iloc[:,8+j*2].tolist())
-       
+st.text(str(number_questions))       
 assignmentname = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")    
 
 if st.button("Provide Feedback"):    
@@ -89,6 +89,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
