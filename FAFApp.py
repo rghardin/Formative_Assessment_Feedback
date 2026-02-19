@@ -5,7 +5,7 @@ Created on Tue Dec 16 14:35:13 2025
 @author: robert.hardin
 
 Add following functionality:
-1. Folder and file selection for output file
+1. Folder and file selection for output file- added 02/19/2026 RGH
 2. Entry of Assignment name and ID for output file- added 02/18/2026 RGH
 3. List and choose LLM
 4. Allow for cut and paste of question and answer text and editing - added 02/19/2026 RGH
@@ -54,7 +54,7 @@ elif input_method == "Upload File":
         solution_string = solution_IO.read()
         st.write(solution_string)
 
-#Upload student quiz assessment file from Canvas
+# Upload assessment quiz student analysis report file from Canvas
 studentresponses_file = st.file_uploader("Choose the file exported from Canvas with student responses", type="csv")
 if studentresponses_file is not None:
     df=pd.read_csv(studentresponses_file)
@@ -76,7 +76,7 @@ assignmentname = st.text_input("Canvas assignment name and ID, format needs to m
 
 if st.button("Provide Feedback"):    
     for i in range(len(df)):
-        st.text(str(i))
+        st.progress(i/len(df))
         prompt = "The following formative assessment was given to students:\n" 
         for j in range(number_questions):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
@@ -92,7 +92,8 @@ if st.button("Provide Feedback"):
     st.dataframe(outputdf)
     outputcsv = outputdf.to_csv().encode("utf-8")
 
-    st.download_button(label="Download comment file", data=outputcsv, file_name="comments.csv",  mime="text/csv", icon=":material/download:" )
+    comments_filename = st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")
+    st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:" )
    
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
@@ -100,6 +101,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
