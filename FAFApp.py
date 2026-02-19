@@ -76,6 +76,7 @@ assignmentname = st.text_input("Canvas assignment name and ID, format needs to m
 
 if st.button("Provide Feedback"):    
     for i in range(len(df)):
+        st.text(str(i))
         prompt = "The following formative assessment was given to students:\n" 
         for j in range(number_questions):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
@@ -89,9 +90,9 @@ if st.button("Provide Feedback"):
         
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf)
-    outputdf.to_csv().encode("utf-8")
+    outputcsv = outputdf.to_csv().encode("utf-8")
 
-    st.download_button(label="Download comment file", data=outputdf, file_name="comments.csv",  mime="text/csv", icon=":material/download:" )
+    st.download_button(label="Download comment file", data=outputcsv, file_name="comments.csv",  mime="text/csv", icon=":material/download:" )
    
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
@@ -99,6 +100,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
