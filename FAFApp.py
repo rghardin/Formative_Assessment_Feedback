@@ -8,10 +8,10 @@ Add following functionality:
 1. Folder and file selection for output file
 2. Entry of Assignment name and ID for output file- added 02/18/2026 RGH
 3. List and choose LLM
-4. Allow for cut and paste of question and answer text and editing
+4. Allow for cut and paste of question and answer text and editing - added 02/19/2026 RGH
 5. Upload materials to use RAG with AI Chat
 6. Generate and select question/solution from uploaded materials
-7. Multiple questions on an assessment- added 02/18/2-26 RGH
+7. Multiple questions on an assessment- added 02/18/2026 RGH
 8. Better error handling
 
 """
@@ -42,13 +42,19 @@ api_key = st.text_input("TAMU API Key", type="password")
     #question_IO = StringIO(question_file.getvalue().decode("utf-8"))
     #question_string = question_IO.read()
     #st.write(question_string) 
-    
-solution_file = st.file_uploader("Choose the solution file", type="txt")
-if solution_file is not None:
-    solution_IO = StringIO(solution_file.getvalue().decode("utf-8"))
-    solution_string = solution_IO.read()
-    st.write(solution_string)
 
+# Use a radio button to select the input method for solution- text entry or file upload
+input_method = st.radio("Select your input method for the assessment solution:", ("Enter Text", "Upload File"))
+if input_method == "Enter Text":
+    solution_string = st.text_area("Enter solution here:", height=200)
+elif input_method == "Upload File":
+    solution_file = st.file_uploader("Choose the solution file", type=["txt","csv"])
+    if solution_file is not None:
+        solution_IO = StringIO(solution_file.getvalue().decode("utf-8"))
+        solution_string = solution_IO.read()
+        st.write(solution_string)
+
+#Upload student quiz assessment file from Canvas
 studentresponses_file = st.file_uploader("Choose the file exported from Canvas with student responses", type="csv")
 if studentresponses_file is not None:
     df=pd.read_csv(studentresponses_file)
@@ -59,14 +65,18 @@ if studentresponses_file is not None:
     questionlist = []
     answerlist = []
     for j in range(number_questions):
-        questionlist.append(column_names[8+j*2])
+        #Remove question number from Canvas export
+        first_space = column_names[8+j*2].find(" ")
+        question = column_names[8+j*2][first_space+1:]
+        #Create a list of questions and a nested list of answers to each question for each student
+        questionlist.append(question)
         answerlist.append(df.iloc[:,8+j*2].tolist())
      
 assignmentname = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")    
 
 if st.button("Provide Feedback"):    
     for i in range(len(df)):
-        prompt = "The following formative assessment question was given to students:\n" 
+        prompt = "The following formative assessment was given to students:\n" 
         for j in range(number_questions):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
         prompt = prompt + "A thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" 
@@ -89,6 +99,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
