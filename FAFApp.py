@@ -75,8 +75,9 @@ if studentresponses_file is not None:
 assignmentname = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")    
 
 if st.button("Provide Feedback"):    
+    feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
     for i in range(len(df)):
-        st.progress(i/len(df))
+        feedback_bar.progress(i/len(df))
         prompt = "The following formative assessment was given to students:\n" 
         for j in range(number_questions):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
@@ -93,7 +94,7 @@ if st.button("Provide Feedback"):
     outputcsv = outputdf.to_csv().encode("utf-8")
 
     comments_filename = st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")
-    st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:" )
+st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
    
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
@@ -101,6 +102,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
