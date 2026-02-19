@@ -55,7 +55,7 @@ if studentresponses_file is not None:
     st.dataframe(df)
     idlist = df.iloc[:,2].tolist()
     column_names = df.columns
-    number_questions = (len(column_names)-11)/2
+    number_questions = round((len(column_names)-11)/2)
     questionlist = []
     answerlist = []
     for j in range(number_questions):
@@ -89,6 +89,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
