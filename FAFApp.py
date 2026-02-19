@@ -93,15 +93,22 @@ if st.button("Provide Feedback"):
     st.dataframe(outputdf)
     outputcsv = outputdf.to_csv().encode("utf-8")
 
-    comments_filename = st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")
-st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
    
+try:
+    st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
+except NameError:
+    pass
+else:
+    comments_filename = st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")
+    st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
+    
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
     #with open(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", 'w', newline='') as csvfile:
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
