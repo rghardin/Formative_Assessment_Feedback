@@ -6,12 +6,12 @@ Created on Tue Dec 16 14:35:13 2025
 
 Add following functionality:
 1. Folder and file selection for output file
-2. Entry of Assignment name and ID for output file- added 02/18 RGH
+2. Entry of Assignment name and ID for output file- added 02/18/2026 RGH
 3. List and choose LLM
 4. Allow for cut and paste of question and answer text and editing
 5. Upload materials to use RAG with AI Chat
 6. Generate and select question/solution from uploaded materials
-7. Multiple questions on an assessment
+7. Multiple questions on an assessment- added 02/18/2-26 RGH
 8. Better error handling
 
 """
@@ -55,7 +55,7 @@ if studentresponses_file is not None:
     st.dataframe(df)
     idlist = df.iloc[:,2].tolist()
     column_names = df.columns
-    number_questions = (length(column_names)-11)/2
+    number_questions = (len(column_names)-11)/2
     questionlist = []
     answerlist = []
     for j in range(number_questions):
@@ -89,6 +89,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
