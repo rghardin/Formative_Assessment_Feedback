@@ -71,7 +71,7 @@ if st.button("Provide Feedback"):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
         prompt = prompt + "A thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" 
         for j in range(number_questions):
-            prompt = prompt + str(j+1) + "." + answerlist[j][i] + "\n"
+            prompt = prompt + str(j+1) + "." + str(answerlist[j][i]) + "\n"
         prompt = prompt + "Please provide feedback to the student."
         
         result=interact_with_model("protected.gpt-5", prompt)
@@ -89,6 +89,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
