@@ -77,7 +77,7 @@ assignmentname = st.text_input("Canvas assignment name and ID, format needs to m
 if st.button("Provide Feedback"):    
     feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
     for i in range(len(df)):
-        feedback_bar.progress(i/len(df))
+        feedback_bar.progress(i/len(df), text=f"Processing feedback for {str(len(df))} students.")
         prompt = "The following formative assessment was given to students:\n" 
         for j in range(number_questions):
             prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
@@ -92,13 +92,6 @@ if st.button("Provide Feedback"):
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf)
     outputcsv = outputdf.to_csv().encode("utf-8")
-
-   
-try:
-    st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
-except NameError:
-    pass
-else:
     comments_filename = st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")
     st.download_button(label="Download comment file", data=outputcsv, file_name=rf"{comments_filename}",  mime="text/csv", icon=":material/download:" )
     
@@ -108,6 +101,7 @@ else:
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
