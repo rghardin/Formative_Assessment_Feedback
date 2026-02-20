@@ -107,6 +107,8 @@ if st.button("Provide Feedback"):
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
+    if "comments_filename" not in st.session_state:
+        st.session_state.comments_filename = "Comments.csv"
     user_input = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value="Comments.csv", key="comments_filename")
     st.session_state.comments_filename = user_input
     
@@ -118,6 +120,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
