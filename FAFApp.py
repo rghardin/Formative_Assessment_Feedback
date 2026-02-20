@@ -7,7 +7,7 @@ Created on Tue Dec 16 14:35:13 2025
 Add following functionality:
 1. Folder and file selection for output file- added 02/19/2026 RGH
 2. Entry of Assignment name and ID for output file- added 02/18/2026 RGH
-3. List and choose LLM
+3. List and choose LLM- added 02/20/2026 RGH
 4. Allow for cut and paste of question and answer text and editing - added 02/19/2026 RGH
 5. Upload materials to use RAG with AI Chat
 6. Generate and select question/solution from uploaded materials
@@ -26,14 +26,19 @@ def call_models_api():
     url = "https://chat-api.tamu.ai/openai/models"
     headers = {
         "accept": "application/json",
-        "Authorization": "Bearer sk-819211e660ad48b79c96110ac57bd0c0"
+        "Authorization": f"Bearer {api_key}"
     }
-    
     response = requests.get(url, headers=headers)
     response.raise_for_status()  # Raises an exception for bad status codes
+    model_info = response.json()['data']
+    id_list = []
+    name_list = []
+    for model in model_info:
+        id_list.append(model['id'])
+        name_list.append(model['name'])
+    model_dict=dict(zip(name_list, id_list))
+    return model_dict
     
-    return response.json()
-
 def interact_with_model(chosen_model, my_query):
     url = "https://chat-api.tamu.ai/openai/chat/completions"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -48,6 +53,10 @@ def interact_with_model(chosen_model, my_query):
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
 api_key = st.text_input("TAMU API Key", type="password")
+
+model_dict = call_models_api()
+selected_model_name = st.selectbox("Pick a large language model to use for providing feedback", list(model_dict))
+selected_model_id = model_dict[selected_model_name]
 
 #question_file = st.file_uploader("Choose the question file", type="txt")
 #if question_file is not None:
@@ -100,12 +109,13 @@ if st.button("Provide Feedback"):
             prompt = prompt + str(j+1) + "." + str(answerlist[j][i]) + "\n"
         prompt = prompt + "Please provide feedback to the student."
         
-        result=interact_with_model("protected.gpt-5", prompt)
+        result=interact_with_model(selected_model_id, prompt)
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
         
     outputdf = pd.DataFrame(idlist, columns=['ID',assignment_name]) 
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
     st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+
 
 
