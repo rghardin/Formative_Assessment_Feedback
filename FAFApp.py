@@ -44,12 +44,6 @@ def interact_with_model(chosen_model, my_query):
     }
     response = requests.post(url, headers=headers, json=payload)  
     return response.json() #Returns LLM response as a json object
-
-def filename_entered():
-    st.session_state.fileflag = True
-    
-if 'fileflag' not in st.session_state:
-    st.session_state.fileflag = False
     
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
@@ -90,7 +84,9 @@ if studentresponses_file is not None:
         questionlist.append(question)
         answerlist.append(df.iloc[:,8+j*2].tolist())
      
-assignmentname = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")    
+assignment_name = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")
+default_filename = assignmentname + ".csv"
+comments_filename = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value=default_filename)
 
 if st.button("Provide Feedback"):    
     feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
@@ -107,55 +103,7 @@ if st.button("Provide Feedback"):
         result=interact_with_model("protected.gpt-5", prompt)
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
         
-    outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
+    outputdf = pd.DataFrame(idlist, columns=['ID',assignment_name]) 
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
-    #if "comments_filename" not in st.session_state:
-        #st.session_state.comments_filename = "Comments.csv"
-    comments_filename = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value="Comments.csv", on_change=filename_entered)
-    #st.session_state.comments_filename = user_input
-
-    if st.session_state.fileflag:
-        st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
-    
-    #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
-    #commentfieldnames=['ID', 'Lecture 5 (2494906)']
-    #with open(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", 'w', newline='') as csvfile:
-        #writer = csv.writer(csvfile)
-        #writer.writerow(commentfieldnames)
-        #writer.writerows(idlist)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
