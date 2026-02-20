@@ -22,6 +22,18 @@ from io import StringIO
 import pandas as pd
 import csv
 
+def call_models_api():
+    url = "https://chat-api.tamu.ai/openai/models"
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer sk-819211e660ad48b79c96110ac57bd0c0"
+    }
+    
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Raises an exception for bad status codes
+    
+    return response.json()
+
 def interact_with_model(chosen_model, my_query):
     url = "https://chat-api.tamu.ai/openai/chat/completions"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -32,7 +44,7 @@ def interact_with_model(chosen_model, my_query):
     }
     response = requests.post(url, headers=headers, json=payload)  
     return response.json() #Returns LLM response as a json object
-
+ 
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
 api_key = st.text_input("TAMU API Key", type="password")
@@ -92,9 +104,9 @@ if st.button("Provide Feedback"):
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
-    comments_filename = rf"{st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")}"
-    st.write(comments_filename)
-    st.download_button(label="Download comment file", data=outputcsv, file_name="comments.csv",  mime="text/csv", icon=":material/download:" )
+    st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.", value="Comments.csv", key="comments_filename")
+    
+    st.download_button(label="Download comment file", data=outputcsv, file_name=st.session_state["comments_filename"],  mime="text/csv", icon=":material/download:", on_click=update_filename)
     
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
@@ -102,6 +114,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
