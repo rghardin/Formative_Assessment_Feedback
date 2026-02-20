@@ -52,8 +52,8 @@ def interact_with_model(chosen_model, my_query):
     
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
-api_key = None
-api_key = st.text_input("TAMU API Key", type="password")
+
+api_key = st.text_input("TAMU API Key", value=None, type="password")
 if api_key is not None:
     model_dict = call_models_api()
     selected_model_name = st.selectbox("Pick a large language model to use for providing feedback", list(model_dict))
@@ -117,6 +117,7 @@ if api_key is not None:
         st.dataframe(outputdf, hide_index=True)
         outputcsv = outputdf.to_csv(index=False).encode("utf-8")
         st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+
 
 
 
