@@ -20,7 +20,6 @@ import requests
 import streamlit as st
 from io import StringIO
 import pandas as pd
-import csv
 
 def call_models_api():
     url = "https://chat-api.tamu.ai/openai/models"
@@ -52,19 +51,12 @@ def interact_with_model(chosen_model, my_query):
     
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
-
 api_key = st.text_input("TAMU API Key", value=None, type="password")
 if api_key is not None:
     model_dict = call_models_api()
     selected_model_name = st.selectbox("Pick a large language model to use for providing feedback", list(model_dict))
     selected_model_id = model_dict[selected_model_name]
-    
-    #question_file = st.file_uploader("Choose the question file", type="txt")
-    #if question_file is not None:
-        #question_IO = StringIO(question_file.getvalue().decode("utf-8"))
-        #question_string = question_IO.read()
-        #st.write(question_string) 
-    
+        
     # Use a radio button to select the input method for solution- text entry or file upload
     input_method = st.radio("Select your input method for the assessment solution:", ("Enter Text", "Upload File"))
     if input_method == "Enter Text":
@@ -101,7 +93,6 @@ if api_key is not None:
     if st.button("Provide Feedback"):    
         feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
         for i in range(len(df)):
-            feedback_bar.progress(i/len(df), text=f"Processing feedback for {str(len(df))} students.")
             prompt = "The following formative assessment was given to students:\n" 
             for j in range(number_questions):
                 prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
@@ -109,14 +100,14 @@ if api_key is not None:
             for j in range(number_questions):
                 prompt = prompt + str(j+1) + "." + str(answerlist[j][i]) + "\n"
             prompt = prompt + "Please provide feedback to the student."
-            
             result=interact_with_model(selected_model_id, prompt)
             idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
-            
+            feedback_bar.progress((i+1)/len(df), text=f"Processing feedback for {str(len(df))} students.")
         outputdf = pd.DataFrame(idlist, columns=['ID',assignment_name]) 
         st.dataframe(outputdf, hide_index=True)
         outputcsv = outputdf.to_csv(index=False).encode("utf-8")
         st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+
 
 
 
