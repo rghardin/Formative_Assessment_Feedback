@@ -93,7 +93,8 @@ if st.button("Provide Feedback"):
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
     comments_filename = rf"{st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")}"
-    st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:" )
+    st.write(comments_filename)
+    st.download_button(label="Download comment file", data=outputcsv, file_name="comments.csv",  mime="text/csv", icon=":material/download:" )
     
     #outputdf.to_csv(r"C:\Users\robert.hardin\OneDrive - Texas A&M University\BAEN 370 Lectures\Lecture 5 Comments Simulated.csv", index=False)
     #commentfieldnames=['ID', 'Lecture 5 (2494906)']
@@ -101,6 +102,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
