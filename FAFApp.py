@@ -90,7 +90,7 @@ if st.button("Provide Feedback"):
         idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
         
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
-    st.dataframe(outputdf)
+    st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
     comments_filename = rf"{st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")}"
     st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:" )
@@ -101,6 +101,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
