@@ -52,70 +52,72 @@ def interact_with_model(chosen_model, my_query):
     
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
+api_key = None
 api_key = st.text_input("TAMU API Key", type="password")
-
-model_dict = call_models_api()
-selected_model_name = st.selectbox("Pick a large language model to use for providing feedback", list(model_dict))
-selected_model_id = model_dict[selected_model_name]
-
-#question_file = st.file_uploader("Choose the question file", type="txt")
-#if question_file is not None:
-    #question_IO = StringIO(question_file.getvalue().decode("utf-8"))
-    #question_string = question_IO.read()
-    #st.write(question_string) 
-
-# Use a radio button to select the input method for solution- text entry or file upload
-input_method = st.radio("Select your input method for the assessment solution:", ("Enter Text", "Upload File"))
-if input_method == "Enter Text":
-    solution_string = st.text_area("Enter solution here:", height=200)
-elif input_method == "Upload File":
-    solution_file = st.file_uploader("Choose the solution file", type=["txt","csv"])
-    if solution_file is not None:
-        solution_IO = StringIO(solution_file.getvalue().decode("utf-8"))
-        solution_string = solution_IO.read()
-        st.write(solution_string)
-
-# Upload assessment quiz student analysis report file from Canvas
-studentresponses_file = st.file_uploader("Choose the file exported from Canvas with student responses", type="csv")
-if studentresponses_file is not None:
-    df=pd.read_csv(studentresponses_file)
-    st.dataframe(df)
-    idlist = df.iloc[:,2].tolist()
-    column_names = df.columns
-    number_questions = round((len(column_names)-11)/2)
-    questionlist = []
-    answerlist = []
-    for j in range(number_questions):
-        #Remove question number from Canvas export
-        first_space = column_names[8+j*2].find(" ")
-        question = column_names[8+j*2][first_space+1:]
-        #Create a list of questions and a nested list of answers to each question for each student
-        questionlist.append(question)
-        answerlist.append(df.iloc[:,8+j*2].tolist())
-     
-assignment_name = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")
-default_filename = assignment_name + "_Comments.csv"
-comments_filename = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value=default_filename)
-
-if st.button("Provide Feedback"):    
-    feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
-    for i in range(len(df)):
-        feedback_bar.progress(i/len(df), text=f"Processing feedback for {str(len(df))} students.")
-        prompt = "The following formative assessment was given to students:\n" 
+if api_key is not None:
+    model_dict = call_models_api()
+    selected_model_name = st.selectbox("Pick a large language model to use for providing feedback", list(model_dict))
+    selected_model_id = model_dict[selected_model_name]
+    
+    #question_file = st.file_uploader("Choose the question file", type="txt")
+    #if question_file is not None:
+        #question_IO = StringIO(question_file.getvalue().decode("utf-8"))
+        #question_string = question_IO.read()
+        #st.write(question_string) 
+    
+    # Use a radio button to select the input method for solution- text entry or file upload
+    input_method = st.radio("Select your input method for the assessment solution:", ("Enter Text", "Upload File"))
+    if input_method == "Enter Text":
+        solution_string = st.text_area("Enter solution here:", height=200)
+    elif input_method == "Upload File":
+        solution_file = st.file_uploader("Choose the solution file", type=["txt","csv"])
+        if solution_file is not None:
+            solution_IO = StringIO(solution_file.getvalue().decode("utf-8"))
+            solution_string = solution_IO.read()
+            st.write(solution_string)
+    
+    # Upload assessment quiz student analysis report file from Canvas
+    studentresponses_file = st.file_uploader("Choose the file exported from Canvas with student responses", type="csv")
+    if studentresponses_file is not None:
+        df=pd.read_csv(studentresponses_file)
+        st.dataframe(df)
+        idlist = df.iloc[:,2].tolist()
+        column_names = df.columns
+        number_questions = round((len(column_names)-11)/2)
+        questionlist = []
+        answerlist = []
         for j in range(number_questions):
-            prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
-        prompt = prompt + "A thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" 
-        for j in range(number_questions):
-            prompt = prompt + str(j+1) + "." + str(answerlist[j][i]) + "\n"
-        prompt = prompt + "Please provide feedback to the student."
-        
-        result=interact_with_model(selected_model_id, prompt)
-        idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
-        
-    outputdf = pd.DataFrame(idlist, columns=['ID',assignment_name]) 
-    st.dataframe(outputdf, hide_index=True)
-    outputcsv = outputdf.to_csv(index=False).encode("utf-8")
-    st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+            #Remove question number from Canvas export
+            first_space = column_names[8+j*2].find(" ")
+            question = column_names[8+j*2][first_space+1:]
+            #Create a list of questions and a nested list of answers to each question for each student
+            questionlist.append(question)
+            answerlist.append(df.iloc[:,8+j*2].tolist())
+         
+    assignment_name = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")
+    default_filename = assignment_name + "_Comments.csv"
+    comments_filename = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value=default_filename)
+    
+    if st.button("Provide Feedback"):    
+        feedback_bar = st.progress(0, text=f"Processing feedback for {str(len(df))} students.")
+        for i in range(len(df)):
+            feedback_bar.progress(i/len(df), text=f"Processing feedback for {str(len(df))} students.")
+            prompt = "The following formative assessment was given to students:\n" 
+            for j in range(number_questions):
+                prompt = prompt + str(j+1) + "." + questionlist[j] + "\n"
+            prompt = prompt + "A thorough and accurate response is given by:\n" + solution_string + "\nThe student's answer was:\n" 
+            for j in range(number_questions):
+                prompt = prompt + str(j+1) + "." + str(answerlist[j][i]) + "\n"
+            prompt = prompt + "Please provide feedback to the student."
+            
+            result=interact_with_model(selected_model_id, prompt)
+            idlist[i]=[idlist[i], result['choices'][0]['message']['content']]
+            
+        outputdf = pd.DataFrame(idlist, columns=['ID',assignment_name]) 
+        st.dataframe(outputdf, hide_index=True)
+        outputcsv = outputdf.to_csv(index=False).encode("utf-8")
+        st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+
 
 
 
