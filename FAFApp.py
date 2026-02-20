@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+x# -*- coding: utf-8 -*-
 """
 Created on Tue Dec 16 14:35:13 2025
 
@@ -91,7 +91,7 @@ if st.button("Provide Feedback"):
         
     outputdf = pd.DataFrame(idlist, columns=['ID',assignmentname]) 
     st.dataframe(outputdf)
-    outputcsv = outputdf.to_csv().encode("utf-8")
+    outputcsv = outputdf.to_csv(index=False).encode("utf-8")
     comments_filename = rf"{st.text_input("Enter the entire path and file name to save the csv file with comments. Alternatively, if only the file name is entered, the file will be saved in the Downloads folder.")}"
     st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:" )
     
@@ -101,6 +101,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
