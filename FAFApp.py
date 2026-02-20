@@ -85,7 +85,7 @@ if studentresponses_file is not None:
         answerlist.append(df.iloc[:,8+j*2].tolist())
      
 assignment_name = st.text_input("Canvas assignment name and ID, format needs to match name and number in gradebook export")
-default_filename = assignmentname + ".csv"
+default_filename = assignment_name + ".csv"
 comments_filename = st.text_input("Enter the file name to save the csv file with comments. To save to a specific folder, enable \"Ask where to save each file before downloading\" in your browser settings.", value=default_filename)
 
 if st.button("Provide Feedback"):    
@@ -107,3 +107,4 @@ if st.button("Provide Feedback"):
     st.dataframe(outputdf, hide_index=True)
     outputcsv = outputdf.to_csv(index=False).encode("utf-8")
     st.download_button(label="Download comment file", data=outputcsv, file_name=comments_filename,  mime="text/csv", icon=":material/download:")
+
