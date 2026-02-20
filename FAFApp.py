@@ -46,7 +46,8 @@ def interact_with_model(chosen_model, my_query):
     return response.json() #Returns LLM response as a json object
 
 def download_callback():
-    write(st.session_state.comments_filename)
+    st.write(st.session_state.comments_filename)
+
 st.title("Formative Assessment Feedback Using TAMU AI Chat")
 
 api_key = st.text_input("TAMU API Key", type="password")
@@ -116,6 +117,7 @@ if st.button("Provide Feedback"):
         #writer = csv.writer(csvfile)
         #writer.writerow(commentfieldnames)
         #writer.writerows(idlist)
+
 
 
 
